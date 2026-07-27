@@ -1,4 +1,4 @@
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -11,15 +11,16 @@ export default async function handler(req, res) {
   }
 
   try {
-    const ai = new GoogleGenAI({ apiKey });
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
     const { prompt } = req.body;
+    const result = await model.generateContent(
+      prompt || '공부 다짐 문구를 한 문장으로 추천해줘.'
+    );
+    const response = await result.response;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.1-flash-lite',
-      contents: prompt || '공부 다짐 문구를 한 문장으로 추천해줘.',
-    });
-
-    return res.status(200).json({ text: response.text });
+    return res.status(200).json({ text: response.text() });
   } catch (error) {
     console.error('Gemini API Error:', error);
     return res.status(500).json({ error: 'AI 응답 생성 실패' });
