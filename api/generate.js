@@ -15,7 +15,7 @@ export default async function handler(req, res) {
     const { prompt } = req.body;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.1-flash-lite',
       contents: prompt || '공부 다짐 문구를 한 문장으로 추천해줘.',
     });
 
